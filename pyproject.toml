@@ -17,6 +17,7 @@ dependencies = [
     "transformers[torch]",
     "evaluate",
     "datasets",
+    "pyarrow==15.0.0",
     "seqeval",
     "wandb",
     "lightning",
