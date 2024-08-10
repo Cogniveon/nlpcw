@@ -60,64 +60,67 @@ def get_dataset():
     return dataset, id2label, label2id, num_labels
 
 
-def load_model(
+def get_model_path(
     exp_or_model_name: str = "romainlhardy/roberta-large-finetuned-ner",
-    experiments_dir: Path = Path("experiments/"),
-    num_labels: int = 9,
-    id2label: dict[int, str] = {},
-    label2id: dict[str, int] = {},
+    experiments_dir: Path = Path("experiments/")
 ):
     model_path = experiments_dir / exp_or_model_name
+    new_experiment = False
     if not os.path.exists(model_path):
         experiment_name = generate_random_name()
         model_path = experiments_dir / experiment_name
         while model_path.exists():
             experiment_name = generate_random_name()
             model_path = experiments_dir / experiment_name
-        log.info(f"Loading pretrained model {exp_or_model_name}")
+        
+        new_experiment = True
+    
+    return model_path, new_experiment
+
+def load_tokenizer(
+    exp_or_model_name: str = "romainlhardy/roberta-large-finetuned-ner",
+    model_path: str | None = None,
+):
+    tokenizer = AutoTokenizer.from_pretrained(
+        exp_or_model_name,
+        add_prefix_space=True,
+        clean_up_tokenization_spaces=True,
+    )
+    
+    if model_path:
         model_path.mkdir(parents=True)
-
-        tokenizer = AutoTokenizer.from_pretrained(
-            exp_or_model_name,
-            add_prefix_space=True,
-            clean_up_tokenization_spaces=True,
-        )
         tokenizer.save_pretrained(model_path)
+    
+    return tokenizer
+    
+def load_model(
+    exp_or_model_name: str = "romainlhardy/roberta-large-finetuned-ner",
+    num_labels: int = 9,
+    id2label: dict[int, str] = {},
+    label2id: dict[str, int] = {},
+    model_path: str | None = None,
+):
+    log.info(f"Loading pretrained model {exp_or_model_name}")
 
-        config_model = AutoConfig.from_pretrained(
-            exp_or_model_name,
-            id2label=id2label,
-            label2id=label2id,
-        )
-        config_model.num_labels = num_labels
+    config_model = AutoConfig.from_pretrained(
+        exp_or_model_name,
+        id2label=id2label,
+        label2id=label2id,
+    )
+    config_model.num_labels = num_labels
 
-        model = AutoModelForTokenClassification.from_pretrained(
-            exp_or_model_name,
-            config=config_model,
-            ignore_mismatched_sizes=True,
-        )
+    model = AutoModelForTokenClassification.from_pretrained(
+        exp_or_model_name,
+        config=config_model,
+        ignore_mismatched_sizes=True,
+    )
+    
+    if model_path:
+        model_path.mkdir(parents=True)
         model.save_pretrained(model_path)
         config_model.save_pretrained(model_path)
 
-    else:
-        log.info(f"Loading checkpoint {model_path}")
-        tokenizer = AutoTokenizer.from_pretrained(
-            model_path,
-            add_prefix_space=True,
-            clean_up_tokenization_spaces=True,
-        )
-
-        config_model = AutoConfig.from_pretrained(
-            model_path,
-            id2label=id2label,
-            label2id=label2id,
-        )
-
-        model = AutoModelForTokenClassification.from_pretrained(
-            model_path, config=config_model, ignore_mismatched_sizes=True
-        )
-
-    return tokenizer, config_model, model, model_path
+    return model, config_model
 
 
 def show_random_elements(dataset, num_examples=10):
