@@ -71,6 +71,9 @@ def load_model(
     if not os.path.exists(model_path):
         experiment_name = generate_random_name()
         model_path = experiments_dir / experiment_name
+        while model_path.exists():
+            experiment_name = generate_random_name()
+            model_path = experiments_dir / experiment_name
         log.info(f"Loading pretrained model {exp_or_model_name}")
         model_path.mkdir(parents=True)
 
@@ -245,7 +248,7 @@ def generate_random_name():
     adj = random.choice(adjectives)
     n = random.choice(nouns)
     x = random.choices(
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321", k=5
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321", k=8
     )
 
     return f"{adj.lower()}-{n.lower()}-{''.join(x)}"
