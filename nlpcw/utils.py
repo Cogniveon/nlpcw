@@ -1,9 +1,6 @@
-import inspect
 import logging
 import os
-from pathlib import Path
 import random
-from typing import Iterable
 from transformers import (
     AutoConfig,
     AutoModelForTokenClassification,
@@ -25,6 +22,12 @@ from IPython.display import display, HTML
 
 log = logging.getLogger(__name__)
 
+
+def find_file(folder_path, filename):
+  for root, dirs, files in os.walk(folder_path):
+    if filename in files:
+      return os.path.join(root, filename)
+  return None
 
 def get_dataset():
     dataset_name = "surrey-nlp/PLOD-CW"
