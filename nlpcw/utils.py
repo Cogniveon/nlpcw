@@ -245,9 +245,10 @@ nouns = [
 
 
 def generate_random_name():
-    adj = random.choice(adjectives)
-    n = random.choice(nouns)
-    x = random.choices(
+    r = random.Random()
+    adj = r.choice(adjectives)
+    n = r.choice(nouns)
+    x = r.choices(
         "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0987654321", k=8
     )
 
