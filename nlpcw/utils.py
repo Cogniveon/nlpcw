@@ -31,7 +31,7 @@ def find_file(folder_path, filename):
 
 def get_dataset():
     dataset_name = "surrey-nlp/PLOD-CW"
-    expected_labels = ["B-O", "B-AC", "I-AC", "B-LF", "I-LF"]
+    expected_labels = ["B-O", "B-AC", "B-LF", "I-LF"]
 
     id2label = dict(enumerate(expected_labels))
     label2id = {v: k for k, v in id2label.items()}
