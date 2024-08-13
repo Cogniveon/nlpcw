@@ -18,6 +18,7 @@ dependencies = [
     "evaluate",
     "datasets",
     "seqeval",
+    "gradio",
     "wandb",
     "lightning",
     "plotly",
